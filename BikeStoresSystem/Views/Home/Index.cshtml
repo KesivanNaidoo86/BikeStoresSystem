@@ -1,0 +1,778 @@
+﻿@using BikeStoresSystem.ViewModels
+@using System.Linq
+@{
+    ViewBag.Title = "Home";
+    var staffList = ViewBag.Staffs as List<StaffViewModel> ?? new List<StaffViewModel>();
+}
+
+<style>
+    .section-card {
+        background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+        border: none;
+        border-radius: 20px;
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+        transition: all 0.3s ease;
+        margin-bottom: 30px;
+        overflow: hidden;
+    }
+
+        .section-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 35px rgba(102, 126, 234, 0.3);
+        }
+
+    .section-header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 20px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+        .section-header h4 {
+            margin: 0;
+            font-weight: 600;
+            font-size: 1.3rem;
+        }
+
+    .section-body {
+        padding: 25px;
+    }
+
+    .info-box {
+        background: white;
+        border: 2px solid #e9ecef;
+        border-radius: 12px;
+        padding: 20px;
+        margin-bottom: 20px;
+        transition: all 0.3s;
+    }
+
+        .info-box:hover {
+            border-color: #667eea;
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.2);
+        }
+
+    .info-label {
+        font-weight: 600;
+        color: #667eea;
+        font-size: 0.85rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-bottom: 5px;
+    }
+
+    .info-value {
+        font-size: 1.1rem;
+        color: #2d3748;
+        font-weight: 500;
+    }
+
+    .purchase-list {
+        background: #f8f9fa;
+        border-radius: 10px;
+        padding: 15px;
+        max-height: 200px;
+        overflow-y: auto;
+    }
+
+    .purchase-item {
+        background: white;
+        padding: 10px;
+        margin-bottom: 8px;
+        border-radius: 8px;
+        border-left: 4px solid #667eea;
+        transition: all 0.2s;
+    }
+
+        .purchase-item:hover {
+            transform: translateX(5px);
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+        }
+
+    .bike-card {
+        background: white;
+        border-radius: 15px;
+        padding: 20px 150px 20px 20px; 
+        margin-bottom: 15px;
+        border: 2px solid #e9ecef;
+        transition: all 0.3s;
+        position: relative;
+        overflow: hidden;
+    }
+
+
+        .bike-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 5px;
+            height: 100%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        .bike-card:hover {
+            border-color: #667eea;
+            transform: translateX(5px);
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.2);
+        }
+
+        .bike-card .prod-image {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            width: 120px;
+            max-height: 110px;
+            height: auto;
+            object-fit: contain;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            background: white;
+            padding: 6px;
+        }
+
+
+    @@media (max-width: 576px) {
+        .bike-card .prod-image {
+            display: none;
+        }
+
+        .bike-card {
+            padding-right: 20px;
+        }
+    }
+
+
+    .filter-section {
+        background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        padding: 20px;
+        border-radius: 15px;
+        margin-bottom: 20px;
+        box-shadow: 0 5px 15px rgba(245, 87, 108, 0.3);
+    }
+
+        .filter-section label {
+            color: white;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+    .pagination-custom {
+        display: flex;
+        justify-content: center;
+        gap: 5px;
+        margin-top: 20px;
+    }
+
+        .pagination-custom button {
+            border: none;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 8px 15px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+            .pagination-custom button:hover {
+                transform: scale(1.1);
+                box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+            }
+
+    .create-btn {
+        background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        border: none;
+        padding: 10px 25px;
+        border-radius: 25px;
+        color: white;
+        font-weight: 600;
+        transition: all 0.3s;
+        box-shadow: 0 4px 15px rgba(245, 87, 108, 0.3);
+    }
+
+        .create-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(245, 87, 108, 0.5);
+        }
+
+    .page-title {
+        text-align: center;
+        margin-bottom: 40px;
+        padding: 30px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border-radius: 20px;
+        box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+    }
+
+        .page-title h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin: 0;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+    .animated-icon {
+        animation: bounce 2s infinite;
+    }
+
+
+
+    @@keyframes bounce {
+        0%, 100% {
+            transform: translateY(0);
+        }
+
+        50% {
+            transform: translateY(-10px);
+        }
+    }
+</style>
+
+<div class="page-title">
+    <h1><i class="fas fa-bicycle animated-icon"></i> Bicycle Sales Management System</h1>
+    <p class="mb-0" style="font-size: 1.1rem; opacity: 0.95;">Manage your bike store with style and efficiency</p>
+</div>
+
+<div class="row">
+    <div class="col-md-4">
+        <div class="section-card">
+            <div class="section-header">
+                <h4><i class="fas fa-users"></i> Staff</h4>
+                <button class="create-btn" data-bs-toggle="modal" data-bs-target="#createStaffModal">
+                    <i class="fas fa-plus"></i> Create
+                </button>
+            </div>
+            <div class="section-body">
+                <div id="staffList">
+                    @{
+
+                        var staffPage = staffList.FirstOrDefault();
+                    }
+                    @if (staffPage != null)
+                    {
+                        <div class="info-box" id="staffCard">
+                            <div class="info-label">First Name</div>
+                            <div class="info-value" id="staffFirstName">@staffPage.first_name</div>
+
+                            <div class="info-label mt-2">Last Name</div>
+                            <div class="info-value" id="staffLastName">@staffPage.last_name</div>
+
+                            <div class="info-label mt-2">Staff ID</div>
+                            <div class="info-value" id="staffId">#@staffPage.staff_id</div>
+
+                            <div class="info-label mt-2">Store</div>
+                            <div class="info-value" id="staffStore">@staffPage.store_name</div>
+
+                            <div class="info-label mt-2">Manager</div>
+                            <div class="info-value" id="staffManager">@staffPage.manager_name</div>
+
+                            <div class="mt-3" id="staffStatus">
+                                @if (staffPage.active == 1)
+                                {
+                                    <span class="badge bg-success"><i class="fas fa-check-circle"></i> Active</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-secondary"><i class="fas fa-times-circle"></i> Inactive</span>
+                                }
+                            </div>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="info-box text-center">
+                            <p class="text-muted"><i class="fas fa-info-circle"></i> No staff found</p>
+                        </div>
+                    }
+                </div>
+
+                <div class="pagination-custom">
+                    <button onclick="changeStaffPage(-1)"><i class="fas fa-chevron-left"></i></button>
+                    <button id="staffPageNum">1 / @staffList.Count()</button>
+                    <button onclick="changeStaffPage(1)"><i class="fas fa-chevron-right"></i></button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="section-card">
+            <div class="section-header" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">
+                <h4><i class="fas fa-user-friends"></i> Customers</h4>
+                <button class="create-btn" data-bs-toggle="modal" data-bs-target="#createCustomerModal">
+                    <i class="fas fa-plus"></i> Create
+                </button>
+            </div>
+            <div class="section-body">
+                <div id="customerList">
+                    @{
+
+                        var customers = (ViewBag.Customers as List<CustomerViewModel>) ?? new List<CustomerViewModel>();
+                        var custFirst = customers.FirstOrDefault();
+                    }
+                    @if (custFirst != null)
+                    {
+                        <div class="info-box" id="customerCard">
+                            <div class="info-label">First Name</div>
+                            <div class="info-value" id="custFirstName">@custFirst.first_name</div>
+
+                            <div class="info-label mt-2">Last Name</div>
+                            <div class="info-value" id="custLastName">@custFirst.last_name</div>
+
+                            <div class="info-label mt-2">Customer ID</div>
+                            <div class="info-value" id="custId">#@custFirst.customer_id</div>
+
+                            <div class="info-label mt-2">Email</div>
+                            <div class="info-value" id="custEmail">@custFirst.email</div>
+
+                            <div class="info-label mt-2">City</div>
+                            <div class="info-value" id="custCity">@custFirst.city, @custFirst.state</div>
+
+                            <div class="purchase-list mt-3">
+                                <div class="purchase-item">
+                                    <small><i class="fas fa-shopping-cart"></i> Purchase History Available</small>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="info-box text-center">
+                            <p class="text-muted"><i class="fas fa-info-circle"></i> No customers found</p>
+                        </div>
+                    }
+                </div>
+
+                <div class="pagination-custom">
+                    <button onclick="changeCustomerPage(-1)"><i class="fas fa-chevron-left"></i></button>
+                    <button id="customerPageNum">1 / @customers.Count()</button>
+                    <button onclick="changeCustomerPage(1)"><i class="fas fa-chevron-right"></i></button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="section-card">
+            <div class="section-header" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);">
+                <h4><i class="fas fa-bicycle"></i> Products</h4>
+                <button class="create-btn" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);">
+                    <i class="fas fa-filter"></i> Filter
+                </button>
+            </div>
+            <div class="section-body">
+                <div class="filter-section">
+                    <form method="get" action="@Url.Action("Index", "Home")">
+                        <div class="row g-2">
+                            <div class="col-12">
+                                <label><i class="fas fa-tag"></i> Brand</label>
+                                <select name="brandFilter" class="form-select" onchange="this.form.submit()">
+                                    <option value="">All Brands</option>
+                                    @foreach (var brand in ViewBag.Brands)
+                                    {
+                                        <option value="@brand.brand_id" @(ViewBag.SelectedBrand == brand.brand_id ? "selected" : "")>
+                                            @brand.brand_name
+                                        </option>
+                                    }
+                                </select>
+                            </div>
+                            <div class="col-12">
+                                <label><i class="fas fa-list"></i> Category</label>
+                                <select name="categoryFilter" class="form-select" onchange="this.form.submit()">
+                                    <option value="">All Categories</option>
+                                    @foreach (var category in ViewBag.Categories)
+                                    {
+                                        <option value="@category.category_id" @(ViewBag.SelectedCategory == category.category_id ? "selected" : "")>
+                                            @category.category_name
+                                        </option>
+                                    }
+                                </select>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+
+                <div id="productList">
+                    @{
+
+                        var products = (ViewBag.Products as List<ProductViewModel>) ?? new List<ProductViewModel>();
+                        var prodFirst = products.FirstOrDefault();
+                        // default image server path
+                        var defaultImageUrl = Url.Content("~/Images/Bikes-Images/Electra_Cruiser.jpeg");
+                    }
+                    @if (prodFirst != null)
+                    {
+                        <div class="bike-card" id="productCard">
+                            <div class="d-flex align-items-center mb-2">
+                                <i class="fas fa-bicycle fa-2x" style="color: #667eea; margin-right: 15px;"></i>
+                                <div>
+                                    <div class="info-label">Product Details</div>
+                                    <div class="info-value" id="prodName">@prodFirst.product_name</div>
+                                </div>
+                            </div>
+
+                            <!-- small product image (top-right). initial src uses default image; JS will update if product has image info -->
+                            <img id="prodImage" class="prod-image" src="@defaultImageUrl" alt="Product image" />
+
+                            <div class="row mt-3">
+                                <div class="col-6">
+                                    <div class="info-label">Brand</div>
+                                    <span class="badge" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);" id="prodBrand">
+                                        @prodFirst.brand_name
+                                    </span>
+                                </div>
+                                <div class="col-6">
+                                    <div class="info-label">Category</div>
+                                    <span class="badge bg-info" id="prodCategory">@prodFirst.category_name</span>
+                                </div>
+                            </div>
+
+                            <div class="row mt-2">
+                                <div class="col-6">
+                                    <div class="info-label">Year</div>
+                                    <div class="info-value" id="prodYear">@prodFirst.model_year</div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="info-label">Price</div>
+                                    <div class="info-value" style="color: #f5576c; font-weight: 700;" id="prodPrice">
+                                        @prodFirst.list_price.ToString("C")
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="bike-card text-center">
+                            <p class="text-muted"><i class="fas fa-info-circle"></i> No products found</p>
+                        </div>
+                    }
+                </div>
+
+                <div class="pagination-custom mt-3">
+                    <button onclick="changeProductPage(-1)"><i class="fas fa-chevron-left"></i></button>
+                    <button id="productPageNum">1 / @products.Count()</button>
+                    <button onclick="changeProductPage(1)"><i class="fas fa-chevron-right"></i></button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="createStaffModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content" style="border-radius: 20px; border: none;">
+            <div class="modal-header" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border-radius: 20px 20px 0 0;">
+                <h5 class="modal-title"><i class="fas fa-user-plus"></i> Add New Staff Member</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body" style="padding: 30px;">
+                <form id="createStaffForm">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label info-label">First Name *</label>
+                            <input type="text" class="form-control" id="staffFirstNameInput" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label info-label">Last Name *</label>
+                            <input type="text" class="form-control" id="staffLastNameInput" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label info-label">Email *</label>
+                            <input type="email" class="form-control" id="staffEmail" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label info-label">Phone</label>
+                            <input type="text" class="form-control" id="staffPhone">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label info-label">Store *</label>
+                            <select class="form-select" id="staffStoreSelect" required></select>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label info-label">Manager</label>
+                            <select class="form-select" id="staffManagerSelect"></select>
+                        </div>
+                        <div class="col-md-12">
+                            <label class="form-label info-label">Active Status *</label>
+                            <select class="form-select" id="staffActive" required>
+                                <option value="1">Active</option>
+                                <option value="0">Inactive</option>
+                            </select>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer" style="border: none; padding: 20px 30px;">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="create-btn" onclick="createStaff()">
+                    <i class="fas fa-save"></i> Save Staff
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="createCustomerModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content" style="border-radius: 20px; border: none;">
+            <div class="modal-header" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white; border-radius: 20px 20px 0 0;">
+                <h5 class="modal-title"><i class="fas fa-user-plus"></i> Add New Customer</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body" style="padding: 30px;">
+                <form id="createCustomerForm">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label info-label">First Name *</label>
+                            <input type="text" class="form-control" id="custFirstNameInput" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label info-label">Last Name *</label>
+                            <input type="text" class="form-control" id="custLastNameInput" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label info-label">Email</label>
+                            <input type="email" class="form-control" id="custEmailInput">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label info-label">Phone</label>
+                            <input type="text" class="form-control" id="custPhoneInput">
+                        </div>
+                        <div class="col-md-12">
+                            <label class="form-label info-label">Street</label>
+                            <input type="text" class="form-control" id="custStreet">
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label info-label">City</label>
+                            <input type="text" class="form-control" id="custCityInput">
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label info-label">State</label>
+                            <input type="text" class="form-control" id="custState">
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label info-label">Zip Code</label>
+                            <input type="text" class="form-control" id="custZip">
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer" style="border: none; padding: 20px 30px;">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="create-btn" onclick="createCustomer()">
+                    <i class="fas fa-save"></i> Save Customer
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts {
+    <script>
+        console.log("Home page scripts loaded");
+
+        let allStaff = @Html.Raw(Json.Encode(staffList));
+        let allCustomers = @Html.Raw(Json.Encode(ViewBag.Customers ?? new List<object>()));
+        let allProducts = @Html.Raw(Json.Encode(ViewBag.Products ?? new List<object>()));
+
+        // default image path (server resolved)
+        const defaultProdImg = '@Url.Content("~/Images/Bikes-Images/Electra_Cruiser.jpeg")';
+
+        console.log("Staff count:", allStaff.length);
+        console.log("Customer count:", allCustomers.length);
+        console.log("Product count:", allProducts.length);
+
+        let staffIndex = 0;
+        let customerIndex = 0;
+        let productIndex = 0;
+
+        $(document).ready(function () {
+            console.log("Document ready");
+            console.log("Staff array:", allStaff);
+            console.log("Customers array:", allCustomers);
+            console.log("Products array:", allProducts);
+            loadStores();
+            loadManagers();
+
+            // if there's at least one product, ensure prodImage matches its image if available
+            if (allProducts && allProducts.length > 0) {
+                const p = allProducts[0];
+                const src = p && (p.image_url || p.image_path) ? (p.image_url || p.image_path) : defaultProdImg;
+                $('#prodImage').attr('src', src);
+            } else {
+                // no products - ensure default shown (already set server-side)
+                $('#prodImage').attr('src', defaultProdImg);
+            }
+        });
+
+        window.changeStaffPage = function(direction) {
+            console.log("changeStaffPage called with direction:", direction);
+            if (allStaff.length === 0) {
+                console.log("No staff data");
+                return;
+            }
+
+            staffIndex += direction;
+            if (staffIndex < 0) staffIndex = allStaff.length - 1;
+            if (staffIndex >= allStaff.length) staffIndex = 0;
+
+            console.log("New staff index:", staffIndex);
+            const staff = allStaff[staffIndex];
+            console.log("Staff data:", staff);
+
+            $('#staffFirstName').text(staff.first_name);
+            $('#staffLastName').text(staff.last_name);
+            $('#staffId').text('#' + staff.staff_id);
+            $('#staffStore').text(staff.store_name);
+            $('#staffManager').text(staff.manager_name);
+
+            const statusBadge = staff.active === 1
+                ? '<span class="badge bg-success"><i class="fas fa-check-circle"></i> Active</span>'
+                : '<span class="badge bg-secondary"><i class="fas fa-times-circle"></i> Inactive</span>';
+            $('#staffStatus').html(statusBadge);
+
+            $('#staffPageNum').text((staffIndex + 1) + ' / ' + allStaff.length);
+        }
+
+        window.changeCustomerPage = function(direction) {
+            console.log("changeCustomerPage called with direction:", direction);
+            if (allCustomers.length === 0) {
+                console.log("No customer data");
+                return;
+            }
+
+            customerIndex += direction;
+            if (customerIndex < 0) customerIndex = allCustomers.length - 1;
+            if (customerIndex >= allCustomers.length) customerIndex = 0;
+
+            const customer = allCustomers[customerIndex];
+            $('#custFirstName').text(customer.first_name);
+            $('#custLastName').text(customer.last_name);
+            $('#custId').text('#' + customer.customer_id);
+            $('#custEmail').text(customer.email || 'N/A');
+            $('#custCity').text((customer.city || 'N/A') + ', ' + (customer.state || 'N/A'));
+
+            $('#customerPageNum').text((customerIndex + 1) + ' / ' + allCustomers.length);
+        }
+
+        window.changeProductPage = function(direction) {
+            console.log("changeProductPage called with direction:", direction);
+            if (allProducts.length === 0) {
+                console.log("No product data");
+                return;
+            }
+
+            productIndex += direction;
+            if (productIndex < 0) productIndex = allProducts.length - 1;
+            if (productIndex >= allProducts.length) productIndex = 0;
+
+            const product = allProducts[productIndex];
+            $('#prodName').text(product.product_name);
+            $('#prodBrand').text(product.brand_name);
+            $('#prodCategory').text(product.category_name);
+            $('#prodYear').text(product.model_year);
+            $('#prodPrice').text('$' + product.list_price.toFixed(2));
+
+            // set image (tries product.image_url or product.image_path then default)
+            const imgSrc = (product && (product.image_url || product.image_path)) ? (product.image_url || product.image_path) : defaultProdImg;
+            $('#prodImage').attr('src', imgSrc);
+
+            $('#productPageNum').text((productIndex + 1) + ' / ' + allProducts.length);
+        }
+
+        function loadStores() {
+            $.ajax({
+                url: '@Url.Action("GetStores", "Home")',
+                type: 'GET',
+                success: function (data) {
+                    var select = $('#staffStoreSelect');
+                    select.empty();
+                    select.append('<option value="">Select Store</option>');
+                    $.each(data, function (i, store) {
+                        select.append('<option value="' + store.store_id + '">' + store.store_name + '</option>');
+                    });
+                }
+            });
+        }
+
+        function loadManagers() {
+            $.ajax({
+                url: '@Url.Action("GetManagers", "Home")',
+                type: 'GET',
+                success: function (data) {
+                    var select = $('#staffManagerSelect');
+                    select.empty();
+                    select.append('<option value="">No Manager</option>');
+                    $.each(data, function (i, manager) {
+                        select.append('<option value="' + manager.staff_id + '">' + manager.name + '</option>');
+                    });
+                }
+            });
+        }
+
+        window.createStaff = function() {
+            console.log("createStaff called");
+            var staffData = {
+                first_name: $('#staffFirstNameInput').val(),
+                last_name: $('#staffLastNameInput').val(),
+                email: $('#staffEmail').val(),
+                phone: $('#staffPhone').val(),
+                store_id: $('#staffStoreSelect').val(),
+                manager_id: $('#staffManagerSelect').val() || null,
+                active: $('#staffActive').val()
+            };
+
+            $.ajax({
+                url: '@Url.Action("CreateStaff", "Home")',
+                type: 'POST',
+                data: staffData,
+                success: function (response) {
+                    if (response.success) {
+                        alert(response.message);
+                        location.reload();
+                    } else {
+                        alert(response.message);
+                    }
+                },
+                error: function () {
+                    alert('Error creating staff member.');
+                }
+            });
+        }
+
+        window.createCustomer = function() {
+            console.log("createCustomer called");
+            var customerData = {
+                first_name: $('#custFirstNameInput').val(),
+                last_name: $('#custLastNameInput').val(),
+                email: $('#custEmailInput').val(),
+                phone: $('#custPhoneInput').val(),
+                street: $('#custStreet').val(),
+                city: $('#custCityInput').val(),
+                state: $('#custState').val(),
+                zip_code: $('#custZip').val()
+            };
+
+            $.ajax({
+                url: '@Url.Action("CreateCustomer", "Home")',
+                type: 'POST',
+                data: customerData,
+                success: function (response) {
+                    if (response.success) {
+                        alert(response.message);
+                        location.reload();
+                    } else {
+                        alert(response.message);
+                    }
+                },
+                error: function () {
+                    alert('Error creating customer.');
+                }
+            });
+        }
+    </script>
+}
